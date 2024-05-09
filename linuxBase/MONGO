@@ -1,0 +1,84 @@
+# Documentation on
+https://www.mongodb.com/docs/manual/reference/
+
+# Does removing all collections in a database also remove the database
+# YES
+
+username: m001-student
+
+show dbs
+use sample_training
+show collections
+
+#===============================================================================================================================================##===============================================================================================================================================#
+FIND / SELECT
+
+#Find random document from the collection
+db.coll.findOne();
+
+# Find specyfic
+# operator for example $and, $or...
+# Aggregation for "$expr"
+# MQL syntax		     {<field>: {<operator>: <value>}}
+# Aggregation syntax   {<operator>: {<field>: <value>}}
+
+db.coll.find({"state": "NY", "city": "ALBANY"}).pretty()
+db.coll.find({ "tripduration": { "$lte" : 70 }, "usertype": { "$ne": "Subscriber" } }).pretty() # Find all documents where the tripduration was less than or equal to 70 seconds and the usertype was not Subscriber
+
+db.companies.find({
+    "$and": [
+        {
+            "$or": [{"founded_year": 2004}, {"founded_month": 10}]
+        },
+        {
+            "$or": [{"category_code": "web"}, {"category_code": "social"}]
+        }
+    ]
+}).count()
+
+db.companies.find({ 
+    "$expr":  { "$eq": ["$permalink", "$twitter_username"] }
+}).count()
+
+db.grades.find({ "class_id": 431 },
+               { "scores": { "$elemMatch": { "score": { "$gt": 85 } } }
+             }).pretty()                                                    # Find all documents where the student in class 431 received a grade higher than 85 for any type of assignment:
+
+db.companies.find({ "funding_rounds": { "$size": 8 } },
+                  { "name": 1, "_id": 0 })                                  # Return only the names of companies from the sample_training.companies collection that had exactly 8 funding rounds
+
+#===============================================================================================================================================##===============================================================================================================================================#
+# INSERT
+
+db.coll.insert([ { "test": 1 }, { "test": 2 }, { "test": 3 } ])
+db.coll.insert([{ "_id": 1, "test": 1 },{ "_id": 3, "test": 3 }])
+db.coll.insert([{ "_id": 1, "test": 1 },{ "_id": 1, "test": 2 }, {"_id": 3, "test": 3 }],{ "ordered": false })
+
+#===============================================================================================================================================##===============================================================================================================================================#
+# UPDATE
+db.coll.updateMany({ "city": "HUDSON" }, { "$inc": { "pop": 10 } })         # Update all documents in the coll collection where the city field is equal to "HUDSON" by adding 10 to the current value of the "pop" field.
+db.coll.updateOne({ "zip": "12534" }, { "$set": { "population": 17630 } })  # Update a single document in the coll collection where the zip field is equal to "12534" by setting the value of the "population" field to 17630.
+
+db.coll.updateOne({ "student_id": 250, "class_id": 339 },                   # Update one document in the coll collection where the student_id is ``250`` *, and the class_id field is 339 ,
+                    { "$push": { "scores": { "type": "extra credit",        # by adding a document element to the "scores" array.
+                                             "score": 100 }
+                                }
+                     })                                                      
+                                                                            
+#===============================================================================================================================================##===============================================================================================================================================#
+DELETE
+
+# Deleting Documents and Collections
+db.coll.deleteMany({ "test": 1 })                                           # Delete all the documents that have test field equal to 1.
+db.coll.deleteOne({ "test": 3 })                                            # Delete one document that has test field equal to 3.
+db.coll.drop()                                                              # Drop the coll collection.
+
+#===============================================================================================================================================##===============================================================================================================================================#
+# Formats
+BISON
+mongodump --uri "mongodb+srv://<your username>:<your password>@<your cluster>.mongodb.net/sample_supplies"
+mongorestore --uri "mongodb+srv://<your username>:<your password>@<your cluster>.mongodb.net/sample_supplies"  --drop dump
+
+JSON
+mongoexport --uri="mongodb+srv://<your username>:<your password>@<your cluster>.mongodb.net/sample_supplies" --collection=sales --out=sales.json
+mongoimport --uri="mongodb+srv://<your username>:<your password>@<your cluster>.mongodb.net/sample_supplies" --drop sales.json
