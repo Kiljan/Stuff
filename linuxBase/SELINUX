@@ -1,0 +1,43 @@
+# BOOLEANS
+getsebool -a | grep http
+setsebool httpd_enable_cgi on # or "off"
+setsebool httpd_enable_cgi on -P # -P persists config after a reeboot
+
+# Context 
+ls -lZ
+ps auxZ | grep httpd
+semanage fcontext -l
+chcon -t httpd_sys_content_t /my/newDir/file # change only for single file
+
+semanage fcontext -a -t httpd_sys_content_t '/my/newDir(/.*)?' # after that all new file in that directory will have prper context 
+restorecon -R /my/newDir
+
+#======================================================================================================##======================================================================================================#
+# Troubleshoot
+yum install setroubleshoot-server
+sealert -a /var/log/audit/audit.log # from there I can take some solution sugestions for all
+sealert -l e9d8fa2e-3608-4ffa-9e72-31a1b85e460b # nicer solution with elier ghederd id
+
+#======================================================================================================##======================================================================================================#
+# Basic SELinux Troubleshooting in CLI
+SELinux isolates all processes running on the system to mitigate attacks which take advantage of privilege escalation. 
+Privilege escalation means that a process gains more access rights than it should have. 
+To prevent this, SELinux enforces Mandatory Access Control (MAC) mechanism over all processes. 
+It labels every process, file, or directory according to rules specified in a security policy known as the SELinux policy.
+The SELinux policy also specifies how processes interact with each other and how they can access files and directories. 
+SELinux denies every action that it is not explicitly allowed by the SELinux policy.
+
+# 1. Use the ausearch utility to find any recent AVC messages and confirm that SELinux denies the action:
+ausearch -m AVC,USER_AVC -ts recent
+
+# 2. Use the journalctl utility to view more information about the AVC message:
+# journalctl -t setroubleshoot --since= [time] 
+journalctl -t setroubleshoot --since=14:20
+
+# 3. Use the sealert utility to further inspect the AVC message:
+# sealert -l [message_ID] == Replace [message_ID] with the number of the AVC message. The output will look similarly as in the examples below:
+sealert -l e9d8fa2e-3608-4ffa-9e72-31a1b85e460b
+sealert -l 1dd524dd-1784-44ef-b6d1-fff9238ed927
+...
+
+Repeat the action you attempted to do before SELinux denied it. If SELinux is still preventing the action, report a bug.
