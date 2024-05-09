@@ -86,7 +86,7 @@ df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -typ
 24. Ensure root is the only UID 0 account
 awk -F: '($3 == 0) { print $1 }' /etc/passwd
 
-========================================================================================================================
+================================================================================================================================================================================================================================================
 For OL8
 https://docs.oracle.com/en/operating-systems/oracle-linux/8/osmanage/index.html
 
@@ -96,3 +96,70 @@ $cat /etc/yum.conf |grep limit		# set limit
 	installonly_limit=3
 $dnf update -y 						# and then just update
 $grubby --info=ALL | grep ^kernel	# verify the resoult
+
+================================================================================================================================================================================================================================================
+COMMANDS
+
+# history search
+sudo sh -c 'for i in $(ls /home/*/.bash_history); do echo "======$i======" && cat $i; done'
+for i in {1629..1631}; do history -d $i; done
+
+# Find on day
+find . -type f -newermt 2022-09-26 ! -newermt 2022-09-27 | xargs du -shc
+find . -type d -newermt 2022-09-01 | xargs du -shc
+nice find /opt/logs -type d -newermt 2022-09-15 ! -newermt 2022-10-03 -print0 | xargs -0 tar cvzf /tmp/since20220915to20221003.tgz
+
+# ==============================================================================================================================
+# activate packets for module
+$libtool --finish /opt/php_lib/ext/excel/modules
+
+# ==============================================================================================================================
+[root@TEST ~]# lsof -i:27017
+COMMAND   PID USER   FD   TYPE   DEVICE SIZE/OFF NODE NAME
+mongod  72147 root    5u  IPv4 72222518      0t0  TCP TEST:27017->bs-iis-11.pe6300.local:65299 (ESTABLISHED)
+mongod  72147 root   12u  IPv4 52016358      0t0  TCP *:27017 (LISTEN)
+
+# ==============================================================================================================================
+# new name for user and his group
+usermod -l app_prod app_stage
+groupmod -n app_prod app_stage
+
+# ==============================================================================================================================
+# Xargs Power
+rpm -qa | sort > pkglist.txt && yum install $(cat /root/pkglist.txt|xargs)
+
+ls | xargs -n1 -0                                                       # 0 indicates new lines select; no by spaces
+echo "a:b:c:d" | xargs -d ":" -n2                                       # -d = delimiter
+ls | xargs -n1 -I {} echo The file name is {}                           # -I "place for input"
+ls somedir/ | grep "^s" | xargs -I {} chown peter:peter somedir/{}      
+
+needs-restarting -r | xargs -I {} echo {} | grep -i '\->' | xargs -I {} echo "$(hostname) | $(ip a |  grep -vi inet6 | grep -vi '127\.0\.0\.1' | grep -i inet | cut -d"/" -f1 | xargs -I {} echo -n {}) | " {}
+
+# ==============================================================================================================================
+# rsync good practice
+rsync -ve "ssh -p 65414" --progress  /home/user/lol.txt user@10.0.0.32:/home/user
+
+rsync -ve "ssh -p 65414" --progress -rAlpX -n /home/user user@10.0.0.32:/tmp
+rsync -ve "ssh -p 65414" --progress -rAlpX /home/user user@10.0.0.32:/tmp
+
+# ==============================================================================================================================
+# To list all available security updates with verbose descriptions of the issues they apply to:
+yum updateinfo info security
+
+# Run the following command to download and apply all available security updates from Red Hat Network hosted or Red Hat Network Satellite:
+yum update --security
+
+# yum-security also allows installing security updates based on the CVE reference of the issue. To install a security update using a CVE reference run:
+yum update --cve <CVE>
+
+# To skip installing or updating kernel or other packages while using the yum update utility in Red Hat Enterprise Linux 5, 6, 7, 8 and 9, use following options:
+# Temporary solution via Command line:
+yum update --exclude=PACKAGENAME 
+
+# Beginning in RHEL 7, yum-utils includes the needs-restarting plug-in with support for the -r, --reboothint flag. This command will report whether a reboot will be needed.
+needs-restarting -r
+
+# ==============================================================================================================================
+# firewalld rich rulee example:
+rule family="ipv4" source address="10.0.0.12/32" port port="6666" protocol="tcp" accept
+
