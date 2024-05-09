@@ -1,0 +1,28 @@
+yum install samba                         # server side
+yum install cifs-utls samba-client        # client side
+
+# If the server is sending ownership information, you may need to add the forceuid and forcegid options.
+$ sudo mount -t cifs -o username=${USER},password=${PASSWORD} //server-address/folder /mount/path/
+
+# Example
+# Server side 
+vim /etc/samba/smb.conf
+[test-shared]
+        comment = share_for_test
+        browseable = yes 
+        path = /data/test_share/shared
+        writeable = yes
+        ea support = yes
+        create mask = 0775
+        directory mask = 0775
+		
+# Client side
+/etc/samba/credentials
+username=user
+password=*********
+domain=WWU
+
+
+# FSTAB way
+#//10.0.0.2/shared /etc/shared cifs auto,credentials=/etc/samba/ss.credentials,uid=$(id -u),gid=$(id -g),forceuid,forcegid,rw 0 0
+//10.10.10.2/test-shared /data/www/shared cifs vers=1.0,auto,credentials=/etc/samba/credentials,uid=1008,gid=1008,forceuid,forcegid,rw 0 0
