@@ -1,0 +1,38 @@
+Base creation
+=>
+CREATE DATABASE `test-db` CHARACTER SET UTF8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER DATABASE `test-db` CHARACTER SET UTF8mb4 COLLATE utf8mb4_unicode_ci;
+
+=>
+CREATE USER 'test-user'@'localhost' IDENTIFIED BY 'xxxxxxxxxxxxxxxxxxx';
+CREATE USER 'test-user'@'%' IDENTIFIED BY 'xxxxxxxxxxxxxxxxxxx';
+GRANT ALL PRIVILEGES ON `test-db` . * TO 'test-user'@'%';
+RENAME USER 'test-user'@'localhost' TO 'stage-user'@'10.10.10.10';
+
+=>
+ALTER USER 'stage-user'@'10.10.10.10' IDENTIFIED BY 'xxxxxxxxxxxxxxxxxxx';
+FLUSH PRIVILEGES;
+
+
+
+
+Search help
+=>
+SELECT * FROM mysql.user;
+SHOW GRANTS FOR 'stage-user'@'10.10.10.10';
+
+
+For backups
+=>
+https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html#mysqldump-option-examples
+mysqldump --set-gtid-purged=OFF database_name > /var/tmp/database_name.sql 
+
+=>
+mysqldump database_name --add-drop-table --lock-tables --add-locks --create-options --extended-insert --quick --events --routines --triggers --set-charset --no-autocommit --set-gtid-purged=OFF --max_allowed_packet=512M | lbzip2 -9 > /var/tmp/database_name_dump.sql.bz2
+
+=>
+# And for restore WITHOUT! flags
+mysql db_name < backup-file.sql 
+
+# Check sqldump with vim, in the end of a file it should be sentence like:
+-- Dump completed on <date and time> 

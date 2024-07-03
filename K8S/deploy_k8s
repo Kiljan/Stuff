@@ -1,0 +1,88 @@
+[certs] Using certificateDir folder "/etc/kubernetes/pki" 
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes" 
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml" 
+[control-plane] Using manifest folder "/etc/kubernetes/manifests" 
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.20.22.24:6443 --token nc6wbo.dn06ag5xqn333bs7 \
+        --discovery-token-ca-cert-hash sha256:66233b8871b7fdeb529634bf35005638ac
+
+
+
+
+Steps to deploy:
+1. Set up  /etc/hosts
+10.10.10.24	master-new
+10.10.10.25	node-new-1
+10.10.10.26	node-new-2
+10.10.10.27	node-new-3
+
+2. Set up firewall - master and nodes
+
+3. Set up containerd - master and nodes
+
+4. Install kubeadm, kubelet, kubectl - master and nodes
+
+5. On master run "kubeadm init" (step for token generation)
+
+6. On master deploy Weave Net for network management (port 6783) 
+https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
+
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+
+7. Join new nodes to master by token from step 5
+kubeadm join 10.10.10.24:6443 --token nc6wbo.dn065xqn33bs7 --discovery-token-ca-cert-hash sha256:66233b8871b7ef8039f322fb638ac
+
+If needed generate new token: 
+kubeadm token create --print-join-command
+
+8. Verify pods 
+kubectl get pod -A -o wide  
+
+9. Set autocompletion
+kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

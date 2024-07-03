@@ -1,0 +1,29 @@
+=>
+mkdir -p $HOME/k8scluster-old-certs/pki
+cp -p /etc/kubernetes/pki/*.* $HOME/k8scluster-old-certs/pki
+cp -p /etc/kubernetes/*.conf $HOME/k8scluster-old-certs
+
+mkdir -p $HOME/k8scluster-old-certs/.kube
+cp -p ~/.kube/config $HOME/k8scluster-old-certs/.kube/.
+
+ls -l $HOME/k8scluster-old-certs/.kube/.
+ls -l $HOME/k8scluster-old-certs/pki/
+
+
+=>
+kubeadm certs check-expiration
+kubeadm certs renew all
+kubeadm certs check-expiration
+
+
+=>
+kubectl get nodes
+kubectl get pods --all-namespaces
+
+systemctl daemon-reload && systemctl restart kubelet
+systemctl status kubelet.service -l
+
+kubectl get nodes
+kubectl get pods -A
+kubectl get pods -A -o wide
+
