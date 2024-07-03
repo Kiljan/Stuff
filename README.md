@@ -1,2 +1,2 @@
 # Stuff
-Repository with selected files / configurations / thoughts from my home labs.
+Repository with selected files / configurations from my home labs.
