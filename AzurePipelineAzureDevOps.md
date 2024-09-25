@@ -1,15 +1,6 @@
 # Azure Pipeline with Azure DevOps
 
-1. [Disclaimer](#disclaimer)
-1. [Introduction](#introduction)
-1. [Prerequisites](#prerequisites)
-1. [Step 1 -> Project](#step-1-->-Project)
-1. [Step 2 -> Repository](#step-2-->-Repository)
-1. [Step 3 -> Planning + pre-creation of resources](#step-3-->-Planning-+-pre-creation-of-resources)
-1. [Step 4 -> Azure Devops connection to Azure resources](#step-4-->-Azure-Devops-connection-to-Azure-resources)
-1. [Step 5 -> Azure DEvOps pipeline](#step-5-->-Azure-DevOps-pipeline)
-1. [Step 6 -> Azure Web App](#step-6-->-Azure-Web-App)
-
+[[_TOC_]]
 
 ## Disclaimer
 
