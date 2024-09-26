@@ -10,7 +10,7 @@ This post do not describe detail process (with screenshots) behind pipeline crea
 
 Azure allows us to create paid or free resources. These resources are a reflection of the entire infrastructure necessary for the application to function properly. So, sometimes these resources are paid, sometimes we pay if we use them, and sometimes we pay if we create them (visit the Azure pricing calculator <https://azure.microsoft.com/en-us/pricing/calculator/> because these are the details that matter). These resources represent all the infrastructure with many options for customizing settings and security.
 
-PS. We could automate creation of those resources by terraform itself. Official HashiCorp provider is called "azurerm" and can be found at <https://registry.terraform.io/providers/hashicorp/azurerm>
+PS. We could automate creation of those resources by terraform itself. Official HashiCorp provider is called "azurerm" and can be found at <https://registry.terraform.io/providers/hashicorp/azurerm>. Great tool is also aztfexport <https://github.com/Azure/aztfexport> (A tool to bring existing Azure resources under the management of Terraform. Great for a basic terraform template to further work with Azure ressources).
 
 ## Prerequisites
 
@@ -125,3 +125,4 @@ stages:
 1. Remember to use debugging options if needed
    1. With "Azure Web App" we should enable "App Service logs" under "Monitoring" for more information from container
    1. Logs will appear in "Log stream" tab under "Monitoring".
+
