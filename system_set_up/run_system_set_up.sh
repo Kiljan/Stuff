@@ -12,3 +12,4 @@ fc-cache -f -v
 #Basic config upload
 cp -avr .config/i3 $HOME/.config
 cp -avr .config/polybar $HOME/.config
+cp -avr .config/nvim $HOME/.config
