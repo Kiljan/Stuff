@@ -13,6 +13,3 @@ fc-cache -f -v
 cp -avr config/i3 $HOME/.config
 cp -avr config/polybar $HOME/.config
 cp -avr config/nvim $HOME/.config
-
-#For neovim
-#:MasonInstall rust-analyzer codelldb
