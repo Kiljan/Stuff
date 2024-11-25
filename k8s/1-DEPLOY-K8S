@@ -61,28 +61,3 @@ kubectl get pod -A -o wide
 9. Set autocompletion
 kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

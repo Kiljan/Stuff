@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "master-new"
 kubectl exec -n kube-system weave-net-r8wn9 -c weave -- /home/weave/weave --local status
 kubectl exec -n kube-system weave-net-r8wn9 -c weave -- /home/weave/weave --local status connections
