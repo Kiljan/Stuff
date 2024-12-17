@@ -1,0 +1,63 @@
+# A PersistentVolume is a piece of storage in the cluster that has been provisioned manually or dynamically using StorageClasses. In that deployment I use manually approach defined in 1_volume_provisioned_manually.yaml config file
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: php-app
+  template:
+    metadata:
+      labels:
+        app: php-app
+    spec:
+      containers:
+      - name: php-app
+        image: <your-acr-name>.azurecr.io/<your-image>:<tag>
+        ports:
+        - containerPort: 80
+        env:
+        - name: CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: php-app-config
+              key: app-config
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-secret 
+              key: username 
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: php-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: php-storage
+        persistentVolumeClaim:
+          claimName: php-pvc
