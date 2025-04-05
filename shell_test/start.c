@@ -19,7 +19,8 @@ int valid_serial(char *psz)
 
     total += psz[i];
   }
-
+  
+  // (72*13)%853 == 83 that is why HHHHHHHHHHHHH is answer 
   if (total % 853 == 83)
     return 1;
 
